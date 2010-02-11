@@ -1,0 +1,55 @@
+= MegaPurple
+
+MegaPurple is a Rails plugin for simple and smart syntax highlighting, via Ultraviolet.
+
+== Installation
+
+  script/plugin install git://github.com/mnoble/mega_purple.git
+
+== Getting Started
+
+Set up your default settings in an initializer:
+
+  # config/initializers/megapurple.rb
+  
+  MegaPurple.configure do |config|
+    config.theme = "railscasts"
+    config.lang = "ruby"
+    config.line_numbers = false
+  end
+
+== Usage
+
+=== Add a column for the formatted content:
+
+Add a <tt>formatted_*</tt> column for the Ultraviolet formatted content, where the <tt>*</tt> is the name the column you're highlighting. This way you have a raw copy for using on edit pages and a formatted copy for displaying publicly.
+
+  class AddFormattedBodyToArticle < ActiveRecord::Migration
+    def self.up
+      add_column :articles, :formatted_body, :text
+    end
+    
+    def self.down
+      remove_column :articles, :formatted_body
+    end
+  end
+
+=== Declare which attribute should be highlighted:
+
+  class Article < ActiveRecord::Base
+    highlight :body
+  end
+
+This will format the content of that attribute and save to it's corresponding <tt>formatted_*</tt> column.
+
+=== When submitting content to a field that will be highlighted:
+
+  This is a blog post with a code example:
+  
+  <code lang="ruby_on_rails">
+    class ArticlesController < ApplicationController
+      caches_action :index
+    end
+  </code>
+
+When writing a post/article/whatever that is going to be highlighted, wrap all code blocks in <tt><code></tt> tags, like so. The <tt>lang</tt> attribute can be any languages shown when you run <tt>uv --list syntaxes</tt>.
